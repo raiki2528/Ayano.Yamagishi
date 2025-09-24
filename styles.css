@@ -113,12 +113,12 @@ main.card { flex: 1 0 auto; }
   }
   
   .identity-avatar {
-    width: 150px;
-    height: 150px;
+    width: 225px;
+    height: 225px;
   }
   
   .identity-name {
-    font-size: 27px;
+    font-size: 40px;
   }
   
   .identity-title {
@@ -250,12 +250,12 @@ main.card { flex: 1 0 auto; }
 
 @media (max-width: 480px) {
   .identity-avatar {
-    width: 135px;
-    height: 135px;
+    width: 202px;
+    height: 202px;
   }
   
   .identity-name {
-    font-size: 24px;
+    font-size: 36px;
   }
   
   .lsc-sns-btn {
