@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ayano Yamagishi">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <title>山岸 綾乃のプロフィール</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+<header class="site-header">
+<div class="hero clickable-image" data-image="/images/LSC_background.jpeg" data-caption="LSC Background">
+<div class="hero-inner">
+</div>
+</div>
+</header>
+<section class="identity-block" aria-label="プロフィール概要">
+<div class="identity-content">
+<img class="identity-avatar clickable-image" src="/images/Ayano.icon.png" alt="プロフィール写真" data-image="/images/Ayano.icon.png" data-caption="Ayano Yamagishi - プロフィール写真">
+<div class="identity-text">
+<h1 class="identity-name">山岸 綾乃<span class="latin">Ayano Yamagishi</span></h1>
+<p class="identity-title">LinkedIn Student Club 4期 PMO</p>
+<p class="identity-subtitle">東京都市大学環境学部 27卒予定</p>
+<p class="identity-subtitle">DAYSPROUTフィールドスタッフ</p>
+<p class="identity-subtitle">DYFC(子供向け釣りクラブ)卒業生・コーチ</p>
+<p class="identity-subtitle">NPO法人IHRP企画担当</p>
+</div>
+</div>
+</section>
+<main class="card" role="main">
+<section class="intro" aria-label="自己紹介">
+<h2 class="intro-title">About me</h2>
+<p>2004年生まれ。神奈川県横浜市で生まれ育ちました。</p>
+<p>👩‍🚀幼稚園生の時の夢は宇宙飛行士。</p>
+<p>➔今の夢はまったくの別物ですが、とにかく、未知の世界に飛び込んで出来そうにない事に挑戦する事が小さい頃から大好きです！！</p>
+</section>
+  <section class="sns" aria-label="SNS リンク">
+    <div class="sns-grid">
+      <a class="sns-btn" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+        <img src="/images/Instagram.png" alt="Instagram">
+        <span class="label">Instagram</span>
+      </a>
+      <a class="sns-btn" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <img src="/images/LinkedIn画像 copy.png" alt="LinkedIn">
+        <span class="label">LinkedIn</span>
+      </a>
+      <a class="sns-btn" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook">
+        <img src="/images/facebook_icon.png" alt="Facebook">
+        <span class="label">Facebook</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="share-section" aria-label="共有・保存">
+    <button class="share-save-btn" id="shareBtn">
+      <span>共有/ホーム画面に保存</span>
+    </button>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <small>© <span id="year"></span> Ayano Yamagishi</small>
+</footer>
+
+<!-- Modal for image viewing -->
+<div id="imageModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImage">
+  <div id="modalCaption"></div>
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear()
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+
+  const shareBtn = document.getElementById('shareBtn');
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  async function shareOrInstall() {
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      await shareProfile();
+      return;
+    }
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
+    if (isIOS && isSafari) {
+      showIOSInstallInstructions();
+    } else if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      deferredPrompt = null;
+    } else {
+      await shareProfile();
+    }
+  }
+
+  function showIOSInstallInstructions() {
+    const instructions = `ホーム画面追加手順\n\n1. Safari下部中央にある共有ボタンをタップ\n(※Safariでこのリンクを開いてください)\n2. 「ホーム画面に追加」を選択\n3. 「追加」をクリック`;
+    if (confirm(instructions + '\n\n今すぐ共有しますか？')) {
+      shareProfile();
+    }
+  }
+
+  async function shareProfile() {
+    const shareData = {
+      title: '山岸 綾乃 - Web Designer / Developer',
+      text: 'プロフィールをご覧ください',
+      url: window.location.href
+    };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+    } catch (err) {
+      console.error('Error sharing: ', err);
+    }
+  }
+
+  shareBtn.addEventListener('click', shareOrInstall);
+
+  function updateButtonText() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isInstalled) {
+      shareBtn.querySelector('span').textContent = '共有';
+    } else if (isIOS) {
+      shareBtn.querySelector('span').textContent = '共有/ホーム画面に追加';
+    } else {
+      shareBtn.querySelector('span').textContent = '共有/ホーム画面に保存';
+    }
+  }
+  updateButtonText();
+
+  // Modal functionality
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const captionText = document.getElementById('modalCaption');
+  const closeBtn = document.getElementsByClassName('close')[0];
+
+  // Add click event listeners to all clickable images
+  document.querySelectorAll('.clickable-image').forEach(img => {
+    img.addEventListener('click', function() {
+      modal.style.display = 'block';
+      modalImg.src = this.dataset.image;
+      captionText.innerHTML = this.dataset.caption;
+    });
+  });
+
+  // Close modal when clicking the X
+  closeBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+
+  // Close modal when clicking outside the image
+  modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && modal.style.display === 'block') {
+      modal.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>
