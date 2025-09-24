@@ -146,3 +146,65 @@ details[open] > summary { display: none; }
 .clickable-image:hover {
   transform: scale(1.02);
 }
+
+/* LSC SNS section styles */
+.lsc-sns {
+  max-width: var(--page-max);
+  width: 100%;
+  margin: 20px auto 0;
+  padding: 0 var(--page-pad);
+}
+
+.lsc-sns-content {
+  background: rgba(11,13,18,0.4);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.lsc-sns-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+}
+
+.lsc-sns-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lsc-sns-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.lsc-sns-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+.lsc-sns-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.lsc-sns-label {
+  color: #ffffff;
+}
