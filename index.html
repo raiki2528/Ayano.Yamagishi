@@ -63,26 +63,34 @@
 <p>➔今の夢はまったくの別物ですが、とにかく、未知の世界に飛び込んで出来そうにない事に挑戦する事が小さい頃から大好きです！！</p>
 </section>
   <section class="sns" aria-label="SNS リンク">
-    <div class="sns-grid">
-      <a class="sns-btn" href="https://www.instagram.com/ayachin_2030/profilecard/?igsh=MWYzbTBlcHFkYW8zZQ%3D%3D" target="_blank" rel="noopener" aria-label="Instagram">
-        <img src="images/Instagram.png" alt="Instagram">
-        <span class="label">Instagram</span>
-      </a>
-      <a class="sns-btn" href="https://www.linkedin.com/in/ayanoyamagishi/" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <img src="images/LinkedIn画像 copy.png" alt="LinkedIn">
-        <span class="label">LinkedIn</span>
-      </a>
-      <a class="sns-btn" href="https://www.facebook.com/people/%E5%B1%B1%E5%B2%B8-%E3%81%82%E3%82%84%E3%81%AE/100064034074891/?mibextid=LQQJ4d&rdid=B5SqalBBCEVDUzzZ&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2FcTyoPkAErV6dbJtU%2F%3Fmibextid%3DLQQJ4d" target="_blank" rel="noopener" aria-label="Facebook">
-        <img src="images/facebook_icon.png" alt="Facebook">
-        <span class="label">Facebook</span>
-      </a>
+    <div class="sns-content">
+      <h2 class="sns-title">個人SNS</h2>
+      <div class="sns-grid">
+        <a class="sns-btn" href="https://www.instagram.com/ayachin_2030/profilecard/?igsh=MWYzbTBlcHFkYW8zZQ%3D%3D" target="_blank" rel="noopener" aria-label="Instagram">
+          <img src="images/Instagram.png" alt="Instagram">
+          <span class="label">Instagram</span>
+        </a>
+        <a class="sns-btn" href="https://www.linkedin.com/in/ayanoyamagishi/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <img src="images/LinkedIn画像 copy.png" alt="LinkedIn">
+          <span class="label">LinkedIn</span>
+        </a>
+        <a class="sns-btn" href="https://www.facebook.com/people/%E5%B1%B1%E5%B2%B8-%E3%81%82%E3%82%84%E3%81%AE/100064034074891/?mibextid=LQQJ4d&rdid=B5SqalBBCEVDUzzZ&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2FcTyoPkAErV6dbJtU%2F%3Fmibextid%3DLQQJ4d" target="_blank" rel="noopener" aria-label="Facebook">
+          <img src="images/facebook_icon.png" alt="Facebook">
+          <span class="label">Facebook</span>
+        </a>
+      </div>
     </div>
   </section>
 
   <section class="share-section" aria-label="共有・保存">
-    <button class="share-save-btn" id="shareBtn">
-      <span>共有/ホーム画面に保存</span>
-    </button>
+    <div class="share-buttons">
+      <button class="share-btn" id="shareBtn">
+        <span>共有</span>
+      </button>
+      <button class="install-btn" id="installBtn">
+        <span>ホーム画面に保存</span>
+      </button>
+    </div>
   </section>
 
 </main>
@@ -108,6 +116,7 @@
   }
 
   const shareBtn = document.getElementById('shareBtn');
+  const installBtn = document.getElementById('installBtn');
   let deferredPrompt;
 
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -115,14 +124,43 @@
     deferredPrompt = e;
   });
 
-  async function shareOrInstall() {
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-      await shareProfile();
-      return;
+  // Share button functionality
+  async function shareProfile() {
+    const shareData = {
+      title: '山岸 綾乃 - LinkedIn Student Club 4期 PMO',
+      text: 'Ayano Yamagishiのプロフィールをご覧ください',
+      url: window.location.href
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: copy URL to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        alert('URLをクリップボードにコピーしました！\nLINEやInstagramなどに貼り付けて共有してください。');
+      }
+    } catch (err) {
+      console.error('Error sharing: ', err);
+      // Fallback: copy URL to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('URLをクリップボードにコピーしました！\nLINEやInstagramなどに貼り付けて共有してください。');
+      } catch (clipboardErr) {
+        alert('共有に失敗しました。URLを手動でコピーしてください:\n' + window.location.href);
+      }
     }
+  }
 
+  // Install button functionality
+  async function installApp() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isInstalled) {
+      alert('このアプリは既にホーム画面に保存されています！');
+      return;
+    }
 
     if (isIOS && isSafari) {
       showIOSInstallInstructions();
@@ -130,41 +168,30 @@
       await deferredPrompt.prompt();
       deferredPrompt = null;
     } else {
-      await shareProfile();
+      showInstallInstructions();
     }
   }
 
   function showIOSInstallInstructions() {
-    const instructions = `ホーム画面追加手順\n\n1. Safari下部中央にある共有ボタンをタップ\n(※Safariでこのリンクを開いてください)\n2. 「ホーム画面に追加」を選択\n3. 「追加」をクリック`;
-    if (confirm(instructions + '\n\n今すぐ共有しますか？')) {
-      shareProfile();
-    }
+    const instructions = `📱 ホーム画面に追加する手順\n\n【iPhone/iPadの場合】\n1. Safariでウェブサイトを開く\n2. 画面下部（または上部）の「共有」アイコンをタップ\n3. 「ホーム画面に追加」を選択\n4. 「追加」をタップ`;
+    alert(instructions);
   }
 
-  async function shareProfile() {
-    const shareData = {
-      title: '山岸 綾乃 - Web Designer / Developer',
-      text: 'プロフィールをご覧ください',
-      url: window.location.href
-    };
-    try {
-      if (navigator.share) await navigator.share(shareData);
-    } catch (err) {
-      console.error('Error sharing: ', err);
-    }
+  function showInstallInstructions() {
+    const instructions = `ホーム画面に保存する手順\n\n【iPhone/iPadの場合】\n1. Safariでウェブサイトを開く\n2. 画面下部（または上部）の「共有」アイコンをタップ\n3. 「ホーム画面に追加」を選択\n4. 「追加」をタップ\n\n【Androidの場合 (Chrome)】\n1. Chromeでウェブサイトを開く\n2. 右上の「︙」メニューをタップ\n3. 「ホーム画面に追加」を選択\n4. 画面の指示に従い「追加」をタップ`;
+    alert(instructions);
   }
 
-  shareBtn.addEventListener('click', shareOrInstall);
+  // Event listeners
+  shareBtn.addEventListener('click', shareProfile);
+  installBtn.addEventListener('click', installApp);
 
   function updateButtonText() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (isInstalled) {
-      shareBtn.querySelector('span').textContent = '共有';
-    } else if (isIOS) {
-      shareBtn.querySelector('span').textContent = '共有/ホーム画面に追加';
-    } else {
-      shareBtn.querySelector('span').textContent = '共有/ホーム画面に保存';
+      installBtn.querySelector('span').textContent = '✅ ホーム画面に保存済み';
+      installBtn.style.opacity = '0.6';
+      installBtn.disabled = true;
     }
   }
   updateButtonText();
